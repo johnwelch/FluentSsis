@@ -18,6 +18,14 @@
         public T New<T>(string moniker)
             where T : EventsProvider
         {
+            Executable executable = New<T>(PackageSingleton.Instance, moniker);
+            PackageSingleton.Instance.Executables.Remove(executable);
+            return executable as T;
+        }
+
+        public T New<T>(IDTSSequence container, string moniker)
+            where T : EventsProvider
+        {
             if (string.IsNullOrWhiteSpace(moniker))
             {
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(moniker));
@@ -26,14 +34,13 @@
             Executable executable;
             try
             {
-                executable = PackageSingleton.Instance.Executables.Add(moniker);
+                executable = container.Executables.Add(moniker);
             }
             catch (DtsRuntimeException e)
             {
                 throw new InvalidOperationException($"The executable could not be created. This is often caused when the moniker ({moniker}) does not match any installed SSIS executables.", e);
             }
 
-            PackageSingleton.Instance.Executables.Remove(executable);
             return executable as T;
         }
 
@@ -42,9 +49,9 @@
             return New<TaskHost>("Microsoft.ExecuteSQLTask");
         }
 
-        public TaskHost DataFlow()
+        public TaskHost DataFlow(IDTSSequence container)
         {
-            return New<TaskHost>("Microsoft.Pipeline");
+            return New<TaskHost>(container, "Microsoft.Pipeline");
         }
     }
 }

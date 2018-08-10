@@ -19,7 +19,7 @@
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(moniker));
             }
 
-            
+
 
             Pipeline = pipeline.Pipeline;
             ComponentMetadata = (IDTSComponentMetaData130)Pipeline.ComponentMetaDataCollection.New();

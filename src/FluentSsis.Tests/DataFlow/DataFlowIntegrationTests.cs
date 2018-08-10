@@ -1,18 +1,16 @@
 ﻿namespace FluentSsis.Tests.DataFlow
 {
-    using System.Linq;
     using FluentSsis.ControlFlow;
-    using FluentSsis.DataFlow;
-    using FluentSsis.Emitter;
-    using FluentSsis.Factories;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
     using Microsoft.SqlServer.Dts.Runtime;
     using NUnit.Framework;
+    using System.IO;
+    using System.Linq;
 
     [TestFixture]
     public class DataFlowIntegrationTests
     {
-        private const string PackageDirectory = @"C:\Temp\TestPackageBuilder\TestPackageBuilder\";
+        private readonly string PackageFile = Path.ChangeExtension(Path.GetTempFileName(), ".dtsx");
         private const string TestString = "DataFlowTests";
 
         private Package _pkg;
@@ -47,7 +45,7 @@
         [Test]
         public void SavePackage()
         {
-            Assert.DoesNotThrow(() => _pkg.Save($"{PackageDirectory}{_pkg.Name}.dtsx"));
+            Assert.DoesNotThrow(() => _pkg.Save($"{PackageFile}"));
         }
     }
 }

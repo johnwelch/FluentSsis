@@ -5,11 +5,13 @@
     using FluentSsis.Factories;
     using Microsoft.SqlServer.Dts.Runtime;
     using NUnit.Framework;
+    using System;
+    using System.IO;
 
     [TestFixture]
     public class ControlFlowIntegrationTests
     {
-        private const string PackageDirectory = @"C:\Temp\TestPackageBuilder\TestPackageBuilder\";
+        private readonly string PackageFile = Path.ChangeExtension(Path.GetTempFileName(), ".dtsx");
         private const string TestString = "ControlFlowTests";
 
         private Package _pkg;
@@ -76,7 +78,7 @@
         [Test]
         public void SavePackage()
         {
-            Assert.DoesNotThrow(() => _pkg.Save($"{PackageDirectory}{_pkg.Name}.dtsx"));
+            Assert.DoesNotThrow(() => _pkg.Save($"{PackageFile}"));
         }
     }
 }

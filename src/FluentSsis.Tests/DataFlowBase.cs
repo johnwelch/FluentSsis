@@ -17,27 +17,31 @@
                 .Add(New.Connection.FromMoniker("OLEDB")
                     .Named("Source")
                     .WithDescription(packageName)
-                    .WithConnectionString("Data Source=localhost;Initial Catalog=AdvancedSsisScripting;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;"))
-                .Add(New.Executable.DataFlow()
-                    .Named("DF")
-                    .WithDescription(packageName)
-                    .AsDataflow(pipe =>
+                    .WithConnectionString("Data Source=localhost;Initial Catalog=AdventureWorks2017;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;"))
+                .Add(container =>
                     {
-                        pipe.Pipeline
-                            .Add(New.Component.FromMoniker(pipe, "Microsoft.OLEDBSource")
-                                    .Named("MyOleDbSource")
-                                    .WithProperty("SqlCommand", "SELECT * FROM sys.tables")
-                                    .WithProperty("AccessMode", 2)
-                                    .WithConnection("Source")
-                                //.RefreshMetadata()
+                        New.Executable.DataFlow(container)
+                        .Named("DF")
+                        .WithDescription(packageName)
+                        .AsDataflow(pipe =>
+                        {
+                            pipe.Pipeline
+                                .Add(New.Component.FromMoniker(pipe, "Microsoft.OLEDBSource")
+                                        .Named("MyOleDbSource")
+                                        .WithProperty("SqlCommand", "SELECT * FROM sys.tables")
+                                        .WithProperty("AccessMode", 2)
+                                        .WithConnection("Source")
+                            //.RefreshMetadata()
+                            //);
+                            )
+                            .Add(New.Component.FromMoniker(pipe, "Microsoft.OLEDBDestination")
+                                .Named("MyOleDbTarget")
+                                .WithProperty("SqlCommand", "Do something")
+                                .WithProperty("AccessMode", 1)
+                               // .WithInput("MyOleDbSOurce.Output")
                             );
-                        //.Add(New.Destination.OleDbDestination(pipe)
-                        //    .Named("MyOleDbTarget")
-                        //    .WithProperty("SqlCommand", "Do something")
-                        //    .WithProperty("AccessMode", 1)
-                        //    .WithInput("MyOleDbSOurce.Output")
-                        //);
-                    })
+                        });
+                    }
                 );
         }
 

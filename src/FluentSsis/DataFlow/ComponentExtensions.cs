@@ -67,5 +67,13 @@
             // path.AttachPathAndPropagateNotifications(output, input);
             return component;
         }
+
+        public static Component RefreshMetadata(this Component component)
+        {
+            component.ManagedComponentWrapper.AcquireConnections(null);
+            component.ManagedComponentWrapper.ReinitializeMetaData();
+            component.ManagedComponentWrapper.ReleaseConnections();
+            return component;
+        }
     }
 }
