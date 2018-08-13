@@ -29,7 +29,7 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var innerObject = taskHost.ConvertTo<T>();
+            var innerObject = taskHost.As<T>();
 
             action(innerObject);
 
@@ -44,7 +44,7 @@
         /// <param name="taskHost">The TaskHost to evaluate.</param>
         /// <returns>The converted inner object.</returns>
         /// <exception cref="InvalidCastException">Thrown if the inner object can't be cast to the specified type.</exception>
-        public static T ConvertTo<T>(this TaskHost taskHost)
+        public static T As<T>(this TaskHost taskHost)
             where T : class
         {
             if (taskHost == null)
@@ -61,7 +61,7 @@
             return innerObject;
         }
 
-        public static TaskHost AsDataflow(this TaskHost executable, Action<Dataflow> action)
+        public static PipelineContext ToPipelineContext(this TaskHost executable)
         {
             if (executable == null)
             {
@@ -75,21 +75,7 @@
                 throw new InvalidCastException();
             }
 
-            // TODO: Not working, because the parent of the executable is NULL
-            // It's been removed from the Signleton, but not added to the real package
-            action(new Dataflow(GetPackage(executable).Connections, executable.Variables, pipeline));
-
-            return executable;
-        }
-
-        private static Package GetPackage(DtsContainer executable)
-        {
-            while (executable.GetType() != typeof(Package))
-            {
-                executable = executable.Parent;
-            }
-
-            return (Package)executable;
+            return new PipelineContext(executable.GetPackage().Connections, executable.Variables, pipeline);
         }
     }
 }

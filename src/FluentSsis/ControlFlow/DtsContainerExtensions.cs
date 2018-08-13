@@ -43,5 +43,40 @@
             item(container);
             return container;
         }
+
+        public static TItem New<TItem>(this IDTSSequence container, string moniker)
+            where TItem : EventsProvider
+        {
+            if (string.IsNullOrWhiteSpace(moniker))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(moniker));
+            }
+
+            try
+            {
+                Executable executable = container.Executables.Add(moniker);
+                return executable as TItem;
+            }
+            catch (DtsRuntimeException e)
+            {
+                throw new InvalidOperationException($"The executable could not be created. This is often caused when the moniker ({moniker}) does not match any installed SSIS executables.", e);
+            }
+        }
+
+        public static TItem ParentAs<TItem>(this DtsContainer container)
+            where TItem : DtsContainer
+        {
+            return container.Parent as TItem;
+        }
+
+        public static Package GetPackage(this DtsContainer container)
+        {
+            while (container.GetType() != typeof(Package))
+            {
+                container = container.Parent;
+            }
+
+            return (Package)container;
+        }
     }
 }

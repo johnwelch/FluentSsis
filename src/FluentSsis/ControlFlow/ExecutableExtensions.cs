@@ -32,7 +32,7 @@ namespace FluentSsis.ControlFlow
                 throw new InvalidCastException();
             }
 
-            return taskHost.ConvertTo<T>();
+            return taskHost.As<T>();
         }
     }
 }

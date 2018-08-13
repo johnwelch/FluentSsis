@@ -15,7 +15,24 @@
         /// <typeparam name="T">The type of the executable being added.</typeparam>
         /// <param name="moniker">The creation name for the executable being added.</param>
         /// <returns>The newly created item.</returns>
+        [Obsolete("Replace with overload that accepts context")]
         public T New<T>(string moniker)
+            where T : EventsProvider
+        {
+            Executable executable = New<T>(PackageSingleton.Instance, moniker);
+
+            PackageSingleton.Instance.Executables.Remove(executable);
+            return (T)executable;
+        }
+
+        /// <summary>
+        /// Creates a new executable of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of the executable being added.</typeparam>
+        /// <param name="sequence">The <see cref="IDTSSequence"/> to add the executable to.</param>
+        /// <param name="moniker">The creation name for the executable being added.</param>
+        /// <returns>The newly created item.</returns>
+        public T New<T>(IDTSSequence sequence, string moniker)
             where T : EventsProvider
         {
             if (string.IsNullOrWhiteSpace(moniker))
@@ -23,18 +40,15 @@
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(moniker));
             }
 
-            Executable executable;
             try
             {
-                executable = PackageSingleton.Instance.Executables.Add(moniker);
+                Executable executable = sequence.Executables.Add(moniker);
+                return executable as T;
             }
             catch (DtsRuntimeException e)
             {
                 throw new InvalidOperationException($"The executable could not be created. This is often caused when the moniker ({moniker}) does not match any installed SSIS executables.", e);
             }
-
-            PackageSingleton.Instance.Executables.Remove(executable);
-            return executable as T;
         }
 
         public TaskHost ExecuteSql()

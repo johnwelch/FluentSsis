@@ -24,7 +24,7 @@ namespace FluentSsis.Tests.DataFlow
             var package = new Package();
             var task = package.Executables.Add("Microsoft.Pipeline") as TaskHost;
             _pipeline = task.InnerObject as MainPipe;
-            _component = new Component(new Dataflow(package.Connections, package.Variables, _pipeline), "Microsoft.OleDBSource");
+            _component = new Component(new PipelineContext(package.Connections, package.Variables, _pipeline), "Microsoft.OleDBSource");
         }
 
         [TestCase("TestName")]

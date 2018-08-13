@@ -3,7 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Runtime.InteropServices;
+    using FluentSsis.Model;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
+    using Microsoft.SqlServer.Dts.Runtime;
     using Microsoft.SqlServer.Management.Common;
     using Microsoft.SqlServer.Management.Smo;
 
@@ -12,14 +15,6 @@
     /// </summary>
     public static class MainPipeExtensions
     {
-        public static MainPipe Add(this MainPipe container, Component component)
-        {
-            // Because of SSIS's object model inconsistencies, we don't
-            // need to actually do anything with component here, as the
-            // factory method has already added it to the ComponentMetaDataCollection.
-            return container;
-        }
-
         //public static MainPipe Add(this MainPipe container, Action<MainPipe> item)
         //{
         //    // Because of SSIS's object model inconsistencies, we don't
@@ -64,10 +59,23 @@
                 result = ParseNextIdentifer(result.remainingIdentifier);
                 if (result.extractedValue.StartsWith("COLUMNS", StringComparison.OrdinalIgnoreCase))
                 {
-                    IDTSInputColumn130 inputColumn = (IDTSInputColumn130)input.InputColumnCollection[GetValueBetweenBrackets(result.extractedValue)];
-                    if (typeof(T) == typeof(IDTSInputColumn100))
+                    var columnName = GetValueBetweenBrackets(result.extractedValue);
+                    try
                     {
-                        return (T)inputColumn;
+                        IDTSInputColumn130 inputColumn = (IDTSInputColumn130)input.InputColumnCollection[columnName];
+                        if (typeof(T) == typeof(IDTSInputColumn130))
+                        {
+                            return (T)inputColumn;
+                        }
+                    }
+                    catch (COMException comEx)
+                    {
+                        if (comEx.HResult == unchecked((int)0xC0010009))
+                        {
+                            throw new InvalidOperationException($"{columnName} was not found in {input.Name}.");
+                        }
+
+                        throw;
                     }
                 }
             }
@@ -84,7 +92,7 @@
                 if (result.extractedValue.StartsWith("COLUMNS", StringComparison.OrdinalIgnoreCase))
                 {
                     IDTSOutputColumn130 outputColumn = (IDTSOutputColumn130)output.OutputColumnCollection[GetValueBetweenBrackets(result.extractedValue)];
-                    if (typeof(T) == typeof(IDTSOutputColumn100))
+                    if (typeof(T) == typeof(IDTSOutputColumn130))
                     {
                         return (T)outputColumn;
                     }

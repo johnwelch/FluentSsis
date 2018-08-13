@@ -50,8 +50,9 @@
             Assert.That(result.Name, Is.EqualTo(expectedName));
         }
 
-        [TestCase(@"MyOleDbTarget.Inputs[OLE DB Destination Input].Columns[name]", "OLE DB Destination Input")]
-        [TestCase(@"Package\DF\MyOleDbTarget.Inputs[OLE DB Destination Input].Columns[name]", "OLE DB Destination Input")]
+        [Ignore("Need an input with mapping for this")]
+        [TestCase(@"MyOleDbTarget.Inputs[OLE DB Destination Input].Columns[Name]", "OLE DB Destination Input")]
+        [TestCase(@"Package\DF\MyOleDbTarget.Inputs[OLE DB Destination Input].Columns[Name]", "OLE DB Destination Input")]
         public void FindObjectInputColumnTest(string identifier, string expectedName)
         {
             var df = _pkg.Executables["DF"].ConvertTo<MainPipe>();
@@ -60,8 +61,8 @@
             Assert.That(result.Name, Is.EqualTo(expectedName));
         }
 
-        [TestCase(@"MyOleDbSource.Outputs[OLE DB Source Output].Columns[name]", "name")]
-        [TestCase(@"Package\DF\MyOleDbSource.Outputs[OLE DB Source Output].Columns[name]", "name")]
+        [TestCase(@"MyOleDbSource.Outputs[OLE DB Source Output].Columns[Name]", "Name")]
+        [TestCase(@"Package\DF\MyOleDbSource.Outputs[OLE DB Source Output].Columns[Name]", "Name")]
         public void FindObjectOutputColumnTest(string identifier, string expectedName)
         {
             var df = _pkg.Executables["DF"].ConvertTo<MainPipe>();

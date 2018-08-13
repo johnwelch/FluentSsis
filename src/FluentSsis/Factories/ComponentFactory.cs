@@ -24,7 +24,7 @@
         //    return metaData;
         //}
 
-        public Component FromMoniker(Dataflow dataflow, string moniker)
+        public Component FromMoniker(PipelineContext dataflow, string moniker)
         {
             var component = new Component(dataflow, moniker);
             return component;

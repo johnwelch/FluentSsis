@@ -1,13 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using FluentSsis.ControlFlow;
-using Microsoft.SqlServer.Dts.Runtime;
-using NSubstitute;
-using NUnit.Framework;
-
-namespace FluentSsis.Tests.ControlFlow
+﻿namespace FluentSsis.Tests.ControlFlow
 {
+    using FluentSsis.ControlFlow;
     using FluentSsis.Factories;
+    using Microsoft.SqlServer.Dts.Runtime;
+    using NUnit.Framework;
 
     [TestFixture]
     public class DtsContainerExtensionsTests
@@ -36,7 +32,17 @@ namespace FluentSsis.Tests.ControlFlow
             Assert.That(pkg.Variables.Contains(name), Is.True);
             Assert.That(pkg.Variables.Count, Is.EqualTo(beforeCount));
             Assert.That(pkg.Variables[name].Value, Is.EqualTo(123));
+        }
 
+        [Test]
+        public void ParentAs()
+        {
+            Package pkg = new Package();
+            Sequence seq = pkg.New<Sequence>("STOCK:SEQUENCE");
+            TaskHost task = seq.New<TaskHost>("Microsoft.Pipeline");
+
+            Assert.That(task.ParentAs<Sequence>(), Is.TypeOf<Sequence>());
+            Assert.That(seq.ParentAs<Package>(), Is.TypeOf<Package>());
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿namespace FluentSsis.DataFlow
 {
     using System;
+    using FluentSsis.Model;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
     using Microsoft.SqlServer.Dts.Runtime;
     using Microsoft.SqlServer.Dts.Runtime.Wrapper;
@@ -40,6 +41,11 @@
             return component;
         }
 
+        public static Component New(this Component component, string moniker)
+        {
+            return component.Parent.New(moniker);
+        }
+
         public static Component WithConnection(this Component component, string name)
         {
             var connection = component.Connections[name];
@@ -62,9 +68,17 @@
             //component.Pipeline.ComponentMetaDataCollection.;
 
 
-            var path = component.Pipeline.PathCollection.New();
+            var path = component.Parent.MainPipe.PathCollection.New();
 
             // path.AttachPathAndPropagateNotifications(output, input);
+            return component;
+        }
+
+        public static Component RefreshMetadata(this Component component)
+        {
+            component.ManagedComponentWrapper.AcquireConnections(null);
+            component.ManagedComponentWrapper.ReinitializeMetaData();
+            component.ManagedComponentWrapper.ReleaseConnections();
             return component;
         }
     }

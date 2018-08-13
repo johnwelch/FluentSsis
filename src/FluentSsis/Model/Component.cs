@@ -1,13 +1,12 @@
-﻿namespace FluentSsis.DataFlow
+﻿namespace FluentSsis.Model
 {
     using System;
-    using FluentSsis.Model;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
     using Microsoft.SqlServer.Dts.Runtime;
 
     public class Component// : IDTSObject100
     {
-        public Component(Dataflow pipeline, string moniker)
+        public Component(PipelineContext pipeline, string moniker)
         {
             if (pipeline == null)
             {
@@ -19,13 +18,12 @@
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(moniker));
             }
 
-            
-
-            Pipeline = pipeline.Pipeline;
-            ComponentMetadata = (IDTSComponentMetaData130)Pipeline.ComponentMetaDataCollection.New();
+            Parent = pipeline;
+            ComponentMetadata = (IDTSComponentMetaData130)Parent.MainPipe.ComponentMetaDataCollection.New();
             ComponentMetadata.ComponentClassID = moniker;
             ManagedComponentWrapper = ComponentMetadata.Instantiate();
             ManagedComponentWrapper.ProvideComponentProperties();
+
             Connections = pipeline.Connections;
         }
 
@@ -33,9 +31,9 @@
 
         public IDTSComponentMetaData130 ComponentMetadata { get; }
 
-        public MainPipe Pipeline { get; }
+        public PipelineContext Parent { get; }
 
-        public Connections Connections { get; }
+        internal Connections Connections { get; }
 
         //public int ID
         //{
