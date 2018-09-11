@@ -4,7 +4,6 @@
     using FluentSsis.Model;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
     using Microsoft.SqlServer.Dts.Runtime;
-    using Microsoft.SqlServer.Dts.Runtime.Wrapper;
 
     public static class ComponentExtensions
     {

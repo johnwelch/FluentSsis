@@ -7,8 +7,8 @@
     using FluentSsis.Model;
     using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
     using Microsoft.SqlServer.Dts.Runtime;
-    using Microsoft.SqlServer.Management.Common;
-    using Microsoft.SqlServer.Management.Smo;
+    //using Microsoft.SqlServer.Management.Common;
+    //using Microsoft.SqlServer.Management.Smo;
 
     /// <summary>
     /// Extends objects in the SSIS data flow.
