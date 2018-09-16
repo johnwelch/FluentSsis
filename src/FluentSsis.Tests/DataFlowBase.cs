@@ -17,20 +17,20 @@
                 .Add(New.Connection.FromMoniker("OLEDB")
                     .Named("Source")
                     .WithDescription(packageName)
-                    .WithConnectionString("Data Source=localhost;Initial Catalog=AdventureWorks;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;"));
+                    .WithConnectionString(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TestDb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;"));
             var pipe = Package.New<TaskHost>("Microsoft.Pipeline")
                 .Named("DF")
                 .WithDescription(packageName)
                 .ToPipelineContext();
             pipe.New("Microsoft.OLEDBSource")
                     .Named("MyOleDbSource")
-                    .WithProperty("SqlCommand", "SELECT * FROM [Production].[Product]")
+                    .WithProperty("SqlCommand", "SELECT * FROM TestTable")
                     .WithProperty("AccessMode", 2)
                     .WithConnection("Source")
                     .RefreshMetadata()
                 .New("Microsoft.OLEDBDestination")
                     .Named("MyOleDbTarget")
-                    .WithProperty("OpenRowset", "[Production].[Product]")
+                    .WithProperty("OpenRowset", "[dbo].[TestTable]")
                     .WithProperty("AccessMode", 3)
                     .WithConnection("Source")
                     .RefreshMetadata()

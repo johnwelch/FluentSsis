@@ -61,8 +61,8 @@
             Assert.That(result.Name, Is.EqualTo(expectedName));
         }
 
-        [TestCase(@"MyOleDbSource.Outputs[OLE DB Source Output].Columns[Name]", "Name")]
-        [TestCase(@"Package\DF\MyOleDbSource.Outputs[OLE DB Source Output].Columns[Name]", "Name")]
+        [TestCase(@"MyOleDbSource.Outputs[OLE DB Source Output].Columns[StringValue]", "StringValue")]
+        [TestCase(@"Package\DF\MyOleDbSource.Outputs[OLE DB Source Output].Columns[StringValue]", "StringValue")]
         public void FindObjectOutputColumnTest(string identifier, string expectedName)
         {
             var df = _pkg.Executables["DF"].ConvertTo<MainPipe>();
